@@ -21,8 +21,9 @@
 // The algorithm should populate and weigh gold bars until a fake on
 import { expect, test } from '@playwright/test'
 
-const bars = ['0','1','2','3','4','5','6','7','8']
-let filteredBars: string[] = []
+let bars = ['0','1','2','3','4','5','6','7']
+let leftBars = bars.slice(0, 4)
+let rightBars = bars.slice(-4)
 let fakeBar = ''
 
 test.describe('fetch sdet challenge', () => {
@@ -31,12 +32,9 @@ test.describe('fetch sdet challenge', () => {
       await page.goto('https://sdetchallenge.fetch.com', {waitUntil: 'load'})
     })
     await test.step('fill in initial bars to be weighed', async () => {
-      for (let index = 0; index < 8; index+=1) {
-        if (index < 4) {
-          await page.locator(`input#left_${index}`).fill(bars[index])
-        } else {
-          await page.locator(`input#right_${index-4}`).fill(bars[index])
-        }
+      for (let index = 0; index < 4; index+=1) {
+          await page.locator(`input#left_${index}`).fill(leftBars[index])
+          await page.locator(`input#right_${index}`).fill(rightBars[index])
       }
     })
   })
@@ -44,28 +42,45 @@ test.describe('fetch sdet challenge', () => {
   test('should select fake gold bar', async ({ page }) => {
     const weighButton = page.getByRole('button', {name: 'Weigh'})
     const resetButton = page.getByRole('button', {name: 'Reset'})
-    const equalResult = page.getByRole('button', {name: '='})
-    filteredBars = ['0','1','2','3']
+    const result = page.locator('button:has-text(">"), button:has-text("<"), button:has-text("=")')
     await test.step('check result of initial weighing', async () => {
       await weighButton.click();
-      await equalResult.waitFor({state: 'visible', timeout: 10_000})
-      await resetButton.click();
-    })
-    await test.step('fill in next batch of bars', async () => {
-      for (let index = 0; index < 4; index+=1) {
-        if (index < 2) {
-          await page.locator(`input#left_${index}`).fill(bars[index])
-        } else {
-          await page.locator(`input#right_${index-2}`).fill(bars[index])
-        }
+      await result.waitFor({state: 'visible', timeout: 5_000})
+      if (await result.textContent() === '=') {
+        fakeBar = '8'
+      } else {
+        bars = await result.textContent() === '>' ? rightBars : leftBars
+        leftBars = bars.slice(0, 2)
+        rightBars = bars.slice(-2)
+        await resetButton.click()
+        await page.locator('button:has-text("?")').waitFor({state: 'visible', timeout: 5_000})
       }
     })
-    await test.step('weigh bars', async () => {
-      await weighButton.click();
-      await equalResult.waitFor({state: 'visible', timeout: 10_000});
-    })
+    if (fakeBar === '') {
+      await test.step('maybe fill in next batch of bars and weigh', async () => {
+        // foreach instead
+        for (let index = 0; index < 2; index+=1) {
+            await page.locator(`input#left_${index}`).fill(leftBars[index])
+            await page.locator(`input#right_${index}`).fill(rightBars[index])
+        }
+        await weighButton.click();
+        await result.waitFor({state: 'visible', timeout: 5_000})
+        bars = await result.textContent() === '>' ? rightBars : leftBars
+        leftBars = [bars[0]]
+        rightBars = [bars[1]]
+        await resetButton.click()
+        await page.locator('button:has-text("?")').waitFor({state: 'visible', timeout: 5_000})
+      })
+      await test.step('maybe fill in third batch of bars and weigh', async () => {
+          await page.locator(`input#left_0`).fill(leftBars[0])
+          await page.locator(`input#right_0`).fill(rightBars[0])
+          await weighButton.click();
+          await page.locator('button:has-text(">"), button:has-text("<")').waitFor({state: 'visible', timeout: 5_000})
+          fakeBar = await result.textContent() === '>' ? leftBars[0] : rightBars[0]
+      })
+    }
     await test.step('verify results and log', async () => {
-      fakeBar = '0'
+      console.log(fakeBar)
       page.on('dialog', async (dialog) => {
         expect(dialog.message()).toContain('Yay!');
         await dialog.accept();
