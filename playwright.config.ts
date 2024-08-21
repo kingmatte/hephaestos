@@ -26,7 +26,7 @@ const config: PlaywrightTestConfig = {
 		storageState: 'tests/test-storage/default.json',
 		actionTimeout: 30 * 1000, // 30 seconds default for actions like clicks to resolve
 		navigationTimeout: 30 * 1000, // 30 seconds default for navigation to complete
-		testIdAttribute: 'id',
+		testIdAttribute: 'data-test-id',
 	},
 };
 // eslint-disable-next-line import/no-default-export
