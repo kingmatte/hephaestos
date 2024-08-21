@@ -19,3 +19,24 @@
 // e. Clicking on the gold bar number at the bottom of the website and checking for the alert message
 // 3. Code the algorithm from step 1 which uses a set of actions from step 2 to find the fake gold bar
 // The algorithm should populate and weigh gold bars until a fake on
+import { test } from '@playwright/test'
+
+const bars = ['0','1','2','3','4','5','6','7','8']
+let fakeBar = ''
+
+test.describe('fetch sdet challenge', () => {
+  test.beforeEach('test setup', async ({ page }) => {
+    await page.goto('https://sdetchallenge.fetch.com', {waitUntil: 'load'})
+    for (let index = 0; index < 8; index+=1) {
+      if (index < 4) {
+        await page.locator(`input#left_${index}`).fill(bars[index])
+      } else {
+        await page.locator(`input#right_${index}`).fill(bars[index])
+      }
+    }
+  })
+
+  test('should select fake gold bar', async () => {
+    //
+  })
+})
