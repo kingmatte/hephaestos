@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-test.describe('Check DMV status', () => {
+test.describe('Check DMV status', { tag: ['@SAMPLE'] }, () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('https://skiptheline.ncdot.gov/')
     })
