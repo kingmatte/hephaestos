@@ -1,0 +1,32 @@
+edit cronjob:
+crontab -e, then i to insert
+ESC :wq to quit and save, ESC :q! to quit w/o saving
+
+add cronjob task (like run at 2):
+4 * * * source /home/deploy/.profile; bash $CAKESCRIPTS/runCleanup.sh
+
+// Adding local environment variable
+- Edit .zshrc by using nano/code .zshrc in a command window (from home directory)
+- Add new environment variable and save
+- Relaunch VS code
+
+// Check for dupes in array
+function hasDuplicates(array) {
+    return (new Set(array)).size !== array.length;
+}
+
+// repo setup
+install @playwright/test: (npm install @playwright/test@latest --save-dev) <=also upgrade command
+run npx playwright install
+add playwright.config.ts to test/browser folder
+add output dir and outputfile to gitignore
+move over global setup, then uncomment those lines in tsconfig
+move one test over with associated files
+update CLI to run tests from cakemail repo in (tailwind/cli repo)
+use ‘npm run test:browser testName’ to run a single test
+
+// matching numbers in a string:
+.match(/(\d+)/)!.toString();
+
+const randomNumber = Math.floor(Math.random() * 1000000).toString();
+
