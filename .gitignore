@@ -4,3 +4,4 @@ playwright-results
 test-results
 test-storage
 /tests/playwright/samples
+/tests/cypress/scratch
