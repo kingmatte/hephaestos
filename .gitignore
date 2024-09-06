@@ -3,5 +3,4 @@ playwright-report
 playwright-results
 test-results
 test-storage
-.matt.ts
-.matt.yml
+/tests/playwright/samples
