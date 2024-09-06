@@ -22,8 +22,6 @@ add playwright.config.ts to test/browser folder
 add output dir and outputfile to gitignore
 move over global setup, then uncomment those lines in tsconfig
 move one test over with associated files
-update CLI to run tests from cakemail repo in (tailwind/cli repo)
-use ‘npm run test:browser testName’ to run a single test
 
 // matching numbers in a string:
 .match(/(\d+)/)!.toString();
